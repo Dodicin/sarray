@@ -10,43 +10,218 @@ struct a_less_b {
 	}
 };
 
-void test_initialization1() {
-    std::cout << "\n\n***TEST COSTRUTTORE DI DEFAULT SU TIPO PRIMITIVO INT***" << std::endl;
-    sarray<int, a_less_b<int>> s_int;
-    assert(s_int.size() == 0 && "Problema con size, costruttore di default su tipo primitivo");
-    assert(s_int.filled() == 0 && "Problema con occupied, costruttore di default su tipo primitivo");
-    assert(s_int.insert(2) == false && "Problema con insert costruttore di default su tipo primitivo");
-    assert(s_int.filled() == 0 && "Problema con occupied, costruttore di default su tipo primitivo");
-    std::cout << "Ordinati" << std::endl;
-    for(int i=0; i<s_int.size(); ++i){
-        std::cout << &s_int[i] << std::endl;
-        std::cout << s_int[i] << std::endl;
-    }
-     std::cout << "Non ordinati" << std::endl;
-    for(int i=0; i<s_int.size(); ++i){
-        std::cout << &s_int(i) << std::endl;
-        std::cout << s_int(i) << std::endl;
-    }
-    assert(s_int.size() == 0 && "Problema con size, costruttore di default su tipo primitivo, dopo insert e remove_head");
-    assert(s_int.filled() == 0 && "Problema con occupied, costruttore di default su tipo primitivo, dopo insert e remove_head");
-    std::cout << "!!!TEST COSTRUTTORE DI DEFAULT SU TIPO PRIMITIVO INT PASSATO!!!" <<std::endl;
+
+void def_init_test() {
+    std::cout << std::endl << "***Initialization test (default)***" << std::endl << std::endl;
+
+    sarray<int, a_less_b<int>> a;
+
+    assert(a.size() == 0 && "[-] Issue with _size, default ctor on primitive type");
+    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.insert(2) == false && "[*] Issue with insert(), default ctor on primitive type");
+    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+
+    std::cout << "[*] Contents of a: " << std::endl;
+    std::cout << a << std::endl;
+
+    std::cout << "***Initialization test (default) successful***" << std::endl;
 }
 
-void test_initialization() {
-    std::cout << "Inizio" << std::endl;
-    sarray<int, a_less_b<int>> s_int(5);
-    s_int.insert(1);
-    s_int.insert(2);
-    std::cout << s_int << std::endl;
+void init_test() {
+    std::cout << std::endl << "***Initialization test***" << std::endl << std::endl;
+
+    sarray<int, a_less_b<int>> a(1);
+
+    assert(a.size() == 2 && "[-] Issue with _size, default ctor on primitive type");
+    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.insert(1) == true && "[-] Issue with _filled, default ctor on primitive type");
+    a.insert(1);
+    assert(a.insert(2) == false && "[-] Issue with _filled, default ctor on primitive type");
+    a.insert(2);
+    assert(a.filled() == 1 && "[-] Issue with _filled, default ctor on primitive type");
+
+    a.clean();
+    assert(a.size() == 2 && "[-] Issue with _size, default ctor on primitive type");
+    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+    a.insert(2);
+    a.insert(3);
+
+    std::cout << "[*] Contents of a: " << std::endl;
+    std::cout << a << std::endl;
+   
+    sarray<int, a_less_b<int>> b(10, 42);
+    assert(b.size() == 10 && "[-] Issue with _size, default ctor on primitive type");
+    assert(b.filled() == 10 && "[-] Issue with _filled, default ctor on primitive type");
+
+    std::cout << "[*] Contents of b: " << std::endl;
+    std::cout << b << std::endl;
+
+    a.clean();
+    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+
+    a.insert(1);
+    a.insert(2);
+    a.insert(10000);
+    a.insert(-8);
+    a.insert(92);
+    a.insert(112);
+
+    std::cout << "[*] Contents of a: " << std::endl;
+    std::cout << std::endl << a << std::endl;
+
+    a.clean();
+    std::cout << "[*] Contents of a: " << std::endl;
+    std::cout << std::endl << a << std::endl;
+
+    std::cout << "***Initialization test successful***" << std::endl;
+
+}
+
+void iterators_test() {
+    std::cout << std::endl << "***Iterators test on primitive type***" << std::endl << std::endl;
+
+    sarray<char, a_less_b<char>> a(6, 'w');
+
+    std::cout << "[*] Contents of a: " << std::endl;
+    std::cout << a << std::endl;
+
+    a.clean();
+    assert(a.size() == 6 && "[-] Issue with _size, default ctor on primitive type");
+    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+
+    a.insert('r');
+    a.insert('a');
+    a.insert('k');
+    a.insert('u');
+    a.insert('g');
+    a.insert('o');
+    assert(a.filled() == 6 && "[-] Issue with _filled, default ctor on primitive type");
+
+    sarray<char, a_less_b<char>>::unsorted_const_iterator i, ie;
+    sarray<char, a_less_b<char>>::const_iterator j, je;
+
+    std::cout << "[*] Contents of a using iterators: " << std::endl;
+    std::cout << "[*** Sorted array:]" << std::endl;
+    for(j = a.begin(), je = a.end(); j != je; ++j) 
+		std::cout << *j << std::endl;
+
+    std::cout << "[*** Unsorted array:]" << std::endl;
+    for(i = a.ubegin(), ie = a.uend(); i != ie; ++i) 
+		std::cout << *i << std::endl;
+
+    std::cout << "***Iterators test on primitive successful***" << std::endl;
+}
+
+void iterators_test2() {
+
+    std::cout << std::endl << "***Iterator test on non-primitive type***" << std::endl << std::endl;
+
+    sarray<std::string, a_less_b<std::string>> a(10);
+
+    a.insert("marmelade");
+    a.insert("to");
+    a.insert("sugar song");
+    a.insert("peanuts");
+    a.insert("and");
+    a.insert("bitter step");
+
+    assert(a.filled() == 6 && "[-] Issue with _filled, default ctor on primitive type");
+
+    sarray<std::string, a_less_b<std::string>>::unsorted_const_iterator i, ie;
+    sarray<std::string, a_less_b<std::string>>::const_iterator j, je;
+
+    std::cout << "[*] Contents of a using iterators: " << std::endl;
+
+    std::cout << std::endl << "[*** Unsorted array:]" << std::endl;
+    for(i = a.ubegin(), ie = a.uend(); i != ie; ++i) {
+		if(&(*i) == nullptr)
+            std::cout << "*nullptr" << std::endl;
+        else
+		    std::cout << *i << std::endl;
+    }
+
+    std::cout << "[*** Sorted array:]" << std::endl;
+
+    for(j = a.begin(), je = a.end(); j != je; ++j) {
+		if(&(*j) == nullptr)
+            std::cout << "*nullptr" << std::endl;
+        else
+		    std::cout << *j << std::endl;
+    }
+
+    std::cout << "[*] Contents of a: " << std::endl;
+    std::cout << a << std::endl;
+
+    a.clean();
+    a.insert("cha");
+    a.insert("la");
+    a.insert("head");
+    a.insert("cha");
+    a.insert("la");
+
+    std::cout << "[*] Contents of a: " << std::endl;
+    std::cout << a << std::endl;
+
+    std::cout << "***Iterators test on non-primitive type successful***" << std::endl;
+}
+
+void operators_test() {
+
+    std::cout << std::endl << "***Operators test***" << std::endl << std::endl;
+
+    sarray<std::string, a_less_b<std::string>> a(10);
+
+    a.insert("marmelade");
+    a.insert("to");
+    a.insert("sugar song");
+    a.insert("peanuts");
+    a.insert("and");
+    a.insert("bitter step");
+
+    assert(a.filled() == 6 && "Issue with _filled, default ctor on primitive type");
+
+    sarray<std::string, a_less_b<std::string>>::unsorted_const_iterator i, ie;
+    sarray<std::string, a_less_b<std::string>>::const_iterator j, je;
+
+    std::cout << "Contents of a using iterators: " << std::endl;
+
+    std::cout << std::endl << "Unsorted array: " << std::endl;
+    for(i = a.ubegin(), ie = a.uend(); i != ie; ++i) {
+		if(&(*i) == nullptr)
+            std::cout << "*nullptr" << std::endl;
+        else
+		    std::cout << *i << std::endl;
+    }
+
+    std::cout << "Sorted array: " << std::endl;
+
+    for(j = a.begin(), je = a.end(); j != je; ++j) {
+		if(&(*j) == nullptr)
+            std::cout << "*nullptr" << std::endl;
+        else
+		    std::cout << *j << std::endl;
+    }
+
+    std::cout << "Contents of a: " << std::endl;
+    std::cout << a << std::endl;
+
+    std::cout << "***Iterators test on non-primitive type successful***" << std::endl;
 }
 
 int main() {
-    // test del costruttore di default su tipo primitivo
-    test_initialization();
+    // Initialization test with the default constructor
+    //def_init_test();
 
-    /*// test del costruttore da un iteratore
-    test_costruttore_iteratori();
-    
+    // Initialization test with secondary constructor, copy constructor, assignment operator
+    //init_test();
+
+    // Iterators test on primitive type
+    //iterators_test();
+
+    // Iterators test on non-primitive type
+    //iterators_test2();
+
+    /*
     // test del costruttore secondario, data la size, su tipo complesso
     test_non_molto_buono();
 

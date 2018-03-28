@@ -1,10 +1,10 @@
-CXXFLAGS = -DEBUG
+CXXFLAGS = -DNDEBUG
 
 main.exe: main.o 
-	g++ main.o -o main.exe
+	g++ -g main.o -o main.exe
 
 main.o: main.cpp
-	g++ $(CXXFLAGS) -c main.cpp -o main.o
+	g++ -g $(CXXFLAGS) -c main.cpp -o main.o
 
 
 .PHONY: clean

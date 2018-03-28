@@ -10,8 +10,8 @@
 #include <cstddef>  // std::ptrdiff_t
 
 /**
-@file sortedarray.h 
-@brief sortedarray class declaration
+@file sarray.h 
+@brief sarray class declaration
 **/
 
 /**
@@ -33,7 +33,7 @@ class sarray {
 public: //Iterators
 
     class const_iterator {
-         T** ptr;
+        const T* const* ptr;
 
     public:
     	typedef std::random_access_iterator_tag iterator_category;
@@ -157,15 +157,22 @@ public: //Iterators
 
     private:
         friend class sarray;
-        const_iterator(T **p) : ptr(p) {}
+        const_iterator(const T * const *p) : ptr(p) {}
     }; //const_iterator class
 
     const_iterator begin() const{
+        #ifndef NDEBUG
+		    std::cout << "const_iterator::begin() - addr: " << _sortedarray << std::endl;
+		#endif
         return const_iterator(_sortedarray);
     }
 
     const_iterator end() const{
-        return const_iterator(_sortedarray+_size);
+       #ifndef NDEBUG
+		    std::cout << "const_iterator::end() - addr: " << _sortedarray+_filled << std::endl;
+		#endif
+        
+        return const_iterator(_sortedarray+_filled);
     }
         
     class unsorted_const_iterator {
@@ -297,11 +304,17 @@ public: //Iterators
     }; //unsorted_const_iterator class
 
     unsorted_const_iterator ubegin() const{
+        #ifndef NDEBUG
+		    std::cout << "unsorted_const_iterator::ubegin() - addr: " << _unsortedarray << std::endl;
+		#endif
         return unsorted_const_iterator(_unsortedarray);
     }
 
     unsorted_const_iterator uend() const{
-        return unsorted_const_iterator(_unsortedarray+_size);
+        #ifndef NDEBUG
+		    std::cout << "unsorted_const_iterator::uend() - addr: " << _unsortedarray+_filled << std::endl;
+		#endif
+        return unsorted_const_iterator(_unsortedarray+_filled);
     }
 
 private:
@@ -333,7 +346,7 @@ public:
         _unsortedarray = new T[size];
         _sortedarray = new T*[size];
         _size = size;
-
+        
 		#ifndef NDEBUG
 		std::cout << "sarray::sarray(size_type)" << std::endl;
 		#endif
@@ -354,7 +367,7 @@ public:
         
 		try {
 			for(size_type i=0 ; i < _size; ++i){
-				insert(&value);
+				insert(value);
             }
 		}
 		catch(...) {
@@ -402,13 +415,25 @@ public:
     void clear() { 
         delete[] _unsortedarray;
         delete[] _sortedarray;
-        _size = 0;
         _filled = 0;
         _unsortedarray = 0;
         _sortedarray = 0;
 
         #ifndef NDEBUG
 		std::cout << "sarray::clear" << std::endl;
+		#endif
+    }
+
+    /**
+    @brief Method to clean the sarray
+    Empties the sarray by swapping it with a new one (the old one gets automatically deleted)
+    **/
+
+    void clean() {
+        _filled = 0;
+
+        #ifndef NDEBUG
+		std::cout << "sarray::clean" << std::endl;
 		#endif
     }
 
@@ -440,6 +465,7 @@ public:
 	    **/
 	~sarray() {
 		clear();
+        _size = 0;
 
 		#ifndef NDEBUG
 		std::cout << "sarray::~sarray()" << std::endl;
@@ -505,14 +531,23 @@ public:
     bool insert(const T &value) {
         if(_size == 0 | _size == _filled)
             return false;
+        try{
+            _unsortedarray[_filled] = value;
+            _sortedarray[_filled] = &_unsortedarray[_filled];
+            ++_filled;
 
-        _unsortedarray[_filled] = value;
-        _sortedarray[_filled] = &_unsortedarray[_filled];
-        ++_filled;
-        insertion_sort();
+            #ifndef NDEBUG
+                std::cout << " _u: " << _unsortedarray[_filled - 1] << " | addr: "<< &_unsortedarray[_filled - 1] << std::endl;
+                std::cout << " _s: " << _sortedarray[_filled - 1] << " | addr: "<< &_sortedarray[_filled - 1] << std::endl;
+            #endif
 
+            insertion_sort();
+        }catch(...){
+            throw;
+        }
+        
         #ifndef NDEBUG
-		std::cout << "sarray::insert()" << std::endl;
+        std::cout << "sarray::insert()" << std::endl;
 		#endif
     }
 
@@ -520,7 +555,7 @@ public:
         for (int i = 1; i < _filled; ++i) {
             for (int j = i; j > 0 && 
                 _funct(*_sortedarray[j - 1], *_sortedarray[j]); --j) {
-                int *tmp = _sortedarray[j];
+                T *tmp = _sortedarray[j];
                 _sortedarray[j] = _sortedarray[j - 1];
                 _sortedarray[j - 1] = tmp;
             }
@@ -542,23 +577,29 @@ template <typename T, typename F>
 std::ostream &operator<<(std::ostream &os, 
                         const sarray<T, F> &sa) {
 
-    typename sarray<T, F>::const_iterator i, ie;
-    typename sarray<T, F>::unsorted_const_iterator i1, ie1;
+    typename sarray<T, F>::unsorted_const_iterator i, ie;
 
-    os << "Unsorted array: " << std::endl;
-    for(i1 = sa.ubegin(), ie1 = sa.uend(); i1!=ie1; ++i1) {
+    os << "[*** Unsorted array:]" << std::endl;
+    for(i = sa.ubegin(), ie = sa.uend(); i!=ie; ++i) {
         #ifndef NDEBUG
-		os << "Address: " << &(*i1) << std::endl;
-		#endif
-		os << *i1 << std::endl;
-    }
-
-    os << "Sorted array: " << std::endl;
-    for(i = sa.begin(), ie = sa.end(); i!=ie; ++i) {
-		#ifndef NDEBUG
 		os << "Address: " << &(*i) << std::endl;
 		#endif
+        
 		os << *i << std::endl;
+    }
+
+    typename sarray<T, F>::const_iterator j, je;
+
+    os << "[*** Sorted array:]" << std::endl;
+    for(j = sa.begin(), je = sa.end(); j!=je; ++j) {
+		#ifndef NDEBUG
+		os << "Address: " << &(*j) << std::endl;
+		#endif
+
+        if(&(*j) == nullptr)
+            os << "*nullptr" << std::endl;
+        else
+		    os << *j << std::endl;
     }
     
 	return os;

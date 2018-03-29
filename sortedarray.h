@@ -58,7 +58,7 @@ public: //Iterators
 
         // Returns pointed value
         pointer operator->() const {
-            return &(*ptr);
+            return (*ptr);
         }
         
         // Returns value at pointed index
@@ -162,14 +162,14 @@ public: //Iterators
 
     const_iterator begin() const{
         #ifndef NDEBUG
-		    std::cout << "const_iterator::begin() - addr: " << _sortedarray << std::endl;
+		    std::cout << "const_iterator::begin() - addr: " << static_cast<const void*>(_sortedarray) << std::endl;
 		#endif
         return const_iterator(_sortedarray);
     }
 
     const_iterator end() const{
        #ifndef NDEBUG
-		    std::cout << "const_iterator::end() - addr: " << _sortedarray+_filled << std::endl;
+		    std::cout << "const_iterator::end() - addr: " << static_cast<const void*>(_sortedarray+_filled) << std::endl;
 		#endif
         
         return const_iterator(_sortedarray+_filled);
@@ -305,14 +305,14 @@ public: //Iterators
 
     unsorted_const_iterator ubegin() const{
         #ifndef NDEBUG
-		    std::cout << "unsorted_const_iterator::ubegin() - addr: " << _unsortedarray << std::endl;
+		    std::cout << "unsorted_const_iterator::ubegin() - addr: " << static_cast<const void*>(_unsortedarray) << std::endl;
 		#endif
         return unsorted_const_iterator(_unsortedarray);
     }
 
     unsorted_const_iterator uend() const{
         #ifndef NDEBUG
-		    std::cout << "unsorted_const_iterator::uend() - addr: " << _unsortedarray+_filled << std::endl;
+		    std::cout << "unsorted_const_iterator::uend() - addr: " << static_cast<const void*>(_unsortedarray+_filled) << std::endl;
 		#endif
         return unsorted_const_iterator(_unsortedarray+_filled);
     }
@@ -330,7 +330,7 @@ public:
 
 		Instantiates an empty sortedarray
 	**/
-	sortedarray(): _size(0), _filled(0), _unsortedarray(0), _sortedarray(0) { 
+	sortedarray(): _unsortedarray(0), _sortedarray(0), _size(0), _filled(0) { 
 		#ifndef NDEBUG
 		std::cout << "sortedarray::sortedarray()" << std::endl;
 		#endif
@@ -342,10 +342,9 @@ public:
 		Instantiates an sortedarray with a given size
         @param size Dimension of sortedarray to instantiate
 	**/
-	explicit sortedarray(size_type size): _size(0), _filled(0), _unsortedarray(0), _sortedarray(0) {
+	explicit sortedarray(size_type size): _unsortedarray(0), _sortedarray(0), _size(size), _filled(0) {
         _unsortedarray = new T[size];
         _sortedarray = new T*[size];
-        _size = size;
         
 		#ifndef NDEBUG
 		std::cout << "sortedarray::sortedarray(size_type)" << std::endl;
@@ -360,10 +359,9 @@ public:
 		@param size Dimension of the sortedarray to instantiate
 		@param value Value for the initialization of the cells
 	**/
-	sortedarray(size_type size, const T &value) : _size(0), _filled(0), _unsortedarray(0), _sortedarray(0) {
+	sortedarray(size_type size, const T &value) : _unsortedarray(0), _sortedarray(0), _size(size), _filled(0) {
 		_unsortedarray = new T[size];
         _sortedarray = new T*[size];
-        _size = size;
         
 		try {
 			for(size_type i=0 ; i < _size; ++i){
@@ -385,7 +383,7 @@ public:
         Copy constructor. Instantiates a sortedarray with the values taken from another sortedarray
 		@param other sortedarray to use to create the current one
 	**/
-	sortedarray(const sortedarray &other) : _size(0), _filled(0), _sortedarray(0), _unsortedarray(0) {
+	sortedarray(const sortedarray &other) :  _unsortedarray(0), _sortedarray(0), _size(0), _filled(0) {
 		_unsortedarray = new T[other._size];
         _sortedarray = new T*[other._size];
 		_size = other._size;
@@ -529,16 +527,19 @@ public:
        @return boolean, true if the insertion succeded or false if it didn't
     **/
     bool insert(const T &value) {
-        if(_size == 0 | _size == _filled)
+        if((_size == 0) | (_size == _filled))
             return false;
+
         try{
             _unsortedarray[_filled] = value;
             _sortedarray[_filled] = &_unsortedarray[_filled];
             ++_filled;
 
             #ifndef NDEBUG
-                std::cout << " _u: " << _unsortedarray[_filled - 1] << " | addr: "<< &_unsortedarray[_filled - 1] << std::endl;
-                std::cout << " _s: " << _sortedarray[_filled - 1] << " | addr: "<< &_sortedarray[_filled - 1] << std::endl;
+                std::cout << " _u: " << _unsortedarray[_filled - 1] 
+                << " | addr: "<< static_cast<const void*>(&_unsortedarray[_filled - 1]) << std::endl;
+                std::cout << " _s: " << static_cast<const void*>(_sortedarray[_filled - 1]) 
+                << " | addr: "<< &_sortedarray[_filled - 1] << std::endl;
             #endif
 
             insertion_sort();
@@ -549,11 +550,13 @@ public:
         #ifndef NDEBUG
         std::cout << "sortedarray::insert()" << std::endl;
 		#endif
+
+        return true;
     }
 
     void insertion_sort() {
-        for (int i = 1; i < _filled; ++i) {
-            for (int j = i; 
+        for (size_type i = 1; i < _filled; ++i) {
+            for (size_type j = i; 
                  j > 0 && _funct(*_sortedarray[j - 1], *_sortedarray[j]); --j) {
                 T *tmp = _sortedarray[j];
                 _sortedarray[j] = _sortedarray[j - 1];
@@ -582,7 +585,7 @@ std::ostream &operator<<(std::ostream &os,
     os << "[*** Unsorted array:]" << std::endl;
     for(i = sa.ubegin(), ie = sa.uend(); i!=ie; ++i) {
         #ifndef NDEBUG
-		os << "Address: " << &(*i) << std::endl;
+		os << "Address: " << static_cast<const void*>(&(*i)) << std::endl;
 		#endif
         
 		os << *i << std::endl;
@@ -593,7 +596,7 @@ std::ostream &operator<<(std::ostream &os,
     os << "[*** Sorted array:]" << std::endl;
     for(j = sa.begin(), je = sa.end(); j!=je; ++j) {
 		#ifndef NDEBUG
-		os << "Address: " << &(*j) << std::endl;
+		os << "Address: " << static_cast<const void*>(&(*j)) << std::endl;
 		#endif
 
         if(&(*j) == nullptr)

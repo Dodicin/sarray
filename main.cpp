@@ -25,7 +25,7 @@ void init_test() {
 
     typedef sortedarray<int, a_less_b<int>> sarray;
 
-    sarray a(1);
+    sarray a(2);
 
     assert(a.size() == 2 && "[-] Issue with _size, default ctor on primitive type");
     assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
@@ -33,7 +33,7 @@ void init_test() {
     a.insert(1);
     assert(a.insert(2) == false && "[-] Issue with _filled, default ctor on primitive type");
     a.insert(2);
-    assert(a.filled() == 1 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.filled() == 2 && "[-] Issue with _filled, default ctor on primitive type");
 
     a.clean();
     assert(a.size() == 2 && "[-] Issue with _size, default ctor on primitive type");
@@ -176,15 +176,15 @@ void operators_test() {
 
     std::cout <<"[*] Contents of a using operators:" << std::endl;
     std::cout <<"[*** Sorted array:] " << std::endl;
-    for(int i=0; i<a.filled(); ++i)
+    for(unsigned int i=0; i<a.filled(); ++i)
         std::cout << a[i] << std::endl;
     std::cout <<"[*** Unsorted array:] " << std::endl;
-    for(int i=0; i<a.filled(); ++i)
+    for(unsigned int i=0; i<a.filled(); ++i)
         std::cout << a(i) << std::endl;
 
     sarray b(3, "bright");
-    assert((a[0] == b[0]) && "Issue with copy constructor");
-    assert((a[1] != b[1]) && "Issue with copy constructor");
+    assert(a(0) == b(0) && "Issue with copy constructor");
+    assert(a(1) != b(1) && "Issue with copy constructor");
 
     a = b;
     std::cout <<"[*] Contents of a:" << std::endl;
@@ -211,7 +211,7 @@ void find_count_test() {
     typedef point<double> point;
 
     sarray_point line(6);
-    for(int i=0; i<line.size(); ++i)
+    for(unsigned int i=0; i<line.size(); ++i)
         line.insert(point(i-3, -i-3));
     std::cout << line << std::endl;
 
@@ -219,7 +219,7 @@ void find_count_test() {
     find_count(line, point(1, 1), funct2);
 
     line.clean();
-    for(int i=0; i<line.size(); ++i)
+    for(unsigned int i=0; i<line.size(); ++i)
         line.insert(point(i-3.5, i-3.5));
     std::cout << line << std::endl;
 
@@ -227,11 +227,6 @@ void find_count_test() {
 
     std::cout << "***find_count test successful***" << std::endl;
 }
-
-void vector_test() {
-
-}
-
 
 int main() {
     

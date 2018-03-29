@@ -1,2 +1,5 @@
 *.o
 *.exe
+html/
+exam-docs/
+relazione.md

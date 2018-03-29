@@ -1,20 +1,13 @@
-#include "sarray.h"
+#include "sortedarray.h"
 #include <string>
 #include <cassert>
 #include <vector>
 
-template <typename T>
-struct a_less_b {
-	bool operator()(const T &a, const T &b) const {
-		return a<b;
-	}
-};
-
-
 void def_init_test() {
     std::cout << std::endl << "***Initialization test (default)***" << std::endl << std::endl;
+    typedef sortedarray<int, a_less_b<int>> sarray;
 
-    sarray<int, a_less_b<int>> a;
+    sarray a;
 
     assert(a.size() == 0 && "[-] Issue with _size, default ctor on primitive type");
     assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
@@ -30,7 +23,9 @@ void def_init_test() {
 void init_test() {
     std::cout << std::endl << "***Initialization test***" << std::endl << std::endl;
 
-    sarray<int, a_less_b<int>> a(1);
+    typedef sortedarray<int, a_less_b<int>> sarray;
+
+    sarray a(1);
 
     assert(a.size() == 2 && "[-] Issue with _size, default ctor on primitive type");
     assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
@@ -49,7 +44,7 @@ void init_test() {
     std::cout << "[*] Contents of a: " << std::endl;
     std::cout << a << std::endl;
    
-    sarray<int, a_less_b<int>> b(10, 42);
+    sarray b(10, 42);
     assert(b.size() == 10 && "[-] Issue with _size, default ctor on primitive type");
     assert(b.filled() == 10 && "[-] Issue with _filled, default ctor on primitive type");
 
@@ -79,8 +74,9 @@ void init_test() {
 
 void iterators_test() {
     std::cout << std::endl << "***Iterators test on primitive type***" << std::endl << std::endl;
+    typedef sortedarray<char, a_less_b<char>> sarray;
 
-    sarray<char, a_less_b<char>> a(6, 'w');
+    sarray a(6, 'w');
 
     std::cout << "[*] Contents of a: " << std::endl;
     std::cout << a << std::endl;
@@ -97,8 +93,8 @@ void iterators_test() {
     a.insert('o');
     assert(a.filled() == 6 && "[-] Issue with _filled, default ctor on primitive type");
 
-    sarray<char, a_less_b<char>>::unsorted_const_iterator i, ie;
-    sarray<char, a_less_b<char>>::const_iterator j, je;
+    sarray::unsorted_const_iterator i, ie;
+    sarray::const_iterator j, je;
 
     std::cout << "[*] Contents of a using iterators: " << std::endl;
     std::cout << "[*** Sorted array:]" << std::endl;
@@ -113,10 +109,11 @@ void iterators_test() {
 }
 
 void iterators_test2() {
-
     std::cout << std::endl << "***Iterator test on non-primitive type***" << std::endl << std::endl;
 
-    sarray<std::string, a_less_b<std::string>> a(10);
+    typedef sortedarray<std::string, a_less_b<std::string>> sarray;
+
+    sarray a(10);
 
     a.insert("marmelade");
     a.insert("to");
@@ -125,10 +122,10 @@ void iterators_test2() {
     a.insert("and");
     a.insert("bitter step");
 
-    assert(a.filled() == 6 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.filled() == 6 && "[-] Issue with _filled, default ctor on non-primitive type");
 
-    sarray<std::string, a_less_b<std::string>>::unsorted_const_iterator i, ie;
-    sarray<std::string, a_less_b<std::string>>::const_iterator j, je;
+    sarray::unsorted_const_iterator i, ie;
+    sarray::const_iterator j, je;
 
     std::cout << "[*] Contents of a using iterators: " << std::endl;
 
@@ -169,76 +166,94 @@ void operators_test() {
 
     std::cout << std::endl << "***Operators test***" << std::endl << std::endl;
 
-    sarray<std::string, a_less_b<std::string>> a(10);
+    typedef sortedarray<std::string, a_less_b<std::string>> sarray;
 
-    a.insert("marmelade");
-    a.insert("to");
-    a.insert("sugar song");
-    a.insert("peanuts");
-    a.insert("and");
-    a.insert("bitter step");
+    sarray a(4);
+    a.insert("bright");
+    a.insert("burning");
+    a.insert("shout");
+    assert(a.filled() == 3 && "Issue with _filled");
 
-    assert(a.filled() == 6 && "Issue with _filled, default ctor on primitive type");
+    std::cout <<"[*] Contents of a using operators:" << std::endl;
+    std::cout <<"[*** Sorted array:] " << std::endl;
+    for(int i=0; i<a.filled(); ++i)
+        std::cout << a[i] << std::endl;
+    std::cout <<"[*** Unsorted array:] " << std::endl;
+    for(int i=0; i<a.filled(); ++i)
+        std::cout << a(i) << std::endl;
 
-    sarray<std::string, a_less_b<std::string>>::unsorted_const_iterator i, ie;
-    sarray<std::string, a_less_b<std::string>>::const_iterator j, je;
+    sarray b(3, "bright");
+    assert((a[0] == b[0]) && "Issue with copy constructor");
+    assert((a[1] != b[1]) && "Issue with copy constructor");
 
-    std::cout << "Contents of a using iterators: " << std::endl;
-
-    std::cout << std::endl << "Unsorted array: " << std::endl;
-    for(i = a.ubegin(), ie = a.uend(); i != ie; ++i) {
-		if(&(*i) == nullptr)
-            std::cout << "*nullptr" << std::endl;
-        else
-		    std::cout << *i << std::endl;
-    }
-
-    std::cout << "Sorted array: " << std::endl;
-
-    for(j = a.begin(), je = a.end(); j != je; ++j) {
-		if(&(*j) == nullptr)
-            std::cout << "*nullptr" << std::endl;
-        else
-		    std::cout << *j << std::endl;
-    }
-
-    std::cout << "Contents of a: " << std::endl;
+    a = b;
+    std::cout <<"[*] Contents of a:" << std::endl;
     std::cout << a << std::endl;
 
-    std::cout << "***Iterators test on non-primitive type successful***" << std::endl;
+    std::cout << "***Operators test successful***" << std::endl;
 }
 
+void find_count_test() {
+    std::cout << std::endl << "***find_count test***" << std::endl << std::endl;
+
+    typedef sortedarray<int> sarray_int;
+
+    sarray_int a(4);
+    a.insert(3);
+    a.insert(2);
+    a.insert(1);
+    a.insert(3);
+
+    a_nequal_b<int> funct;
+    find_count(a, 3, funct);
+
+    typedef sortedarray<point<double>, same_quadrant<double>> sarray_point;
+    typedef point<double> point;
+
+    sarray_point line(6);
+    for(int i=0; i<line.size(); ++i)
+        line.insert(point(i-3, -i-3));
+    std::cout << line << std::endl;
+
+    same_quadrant<double> funct2;
+    find_count(line, point(1, 1), funct2);
+
+    line.clean();
+    for(int i=0; i<line.size(); ++i)
+        line.insert(point(i-3.5, i-3.5));
+    std::cout << line << std::endl;
+
+    find_count(line, point(1, 1), funct2);
+
+    std::cout << "***find_count test successful***" << std::endl;
+}
+
+void vector_test() {
+
+}
+
+
 int main() {
+    
     // Initialization test with the default constructor
-    //def_init_test();
+    def_init_test();
 
     // Initialization test with secondary constructor, copy constructor, assignment operator
-    //init_test();
+    init_test();
 
     // Iterators test on primitive type
-    //iterators_test();
+    iterators_test();
 
     // Iterators test on non-primitive type
-    //iterators_test2();
+    iterators_test2();
 
-    /*
-    // test del costruttore secondario, data la size, su tipo complesso
-    test_non_molto_buono();
+    // Operators test
+    operators_test();
 
-    // test costruttore copia su tipi semplici e complessi
-    test_costruttore_copia();
+    // find_count test
+    find_count_test();
 
-    // test che crea un cbuffer di cbuffer di voci e ci lavora su
-    test_cbuffer_di_cbuffer_di_voci();
-
-    // test che prova evaluate_if su varie struct
-    test_evaluate_if();
-
-    // test che prova a fondo operator[]
-    test_operator_quadre();
-    
-    // test che chiama la clear su un cbuffer e poi lo riempie di nuovo
-    test_clear_poi_riempi();*/
+    std::cout << std::endl << "*** All test completed successfully ***" << std::endl;
 
     return 0;
 }

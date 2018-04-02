@@ -1,7 +1,6 @@
 #include "sortedarray.h"
 #include <string>
 #include <cassert>
-#include <vector>
 
 void def_init_test() {
     std::cout << std::endl << "***Initialization test (default)***" << std::endl << std::endl;
@@ -109,6 +108,72 @@ void iterators_test() {
 }
 
 void iterators_test2() {
+    std::cout << std::endl << "***Iterators operators test***" << std::endl << std::endl;
+    typedef sortedarray<char, a_less_b<char>> sarray_char;
+    typedef sortedarray<std::string, a_less_b<std::string>> sarray_string;
+
+    sarray_char a(6);
+    a.insert('r');
+    a.insert('a');
+    a.insert('k');
+    a.insert('u');
+    a.insert('g');
+    a.insert('o');
+    std::cout << a << std::endl;
+
+    sarray_char::unsorted_const_iterator i, ie;
+    sarray_char::const_iterator j, je;
+
+    i = a.ubegin();
+    ie = a.uend();
+    j= a.begin();
+    je = a.end();
+
+    std::cout << "[*] First three elements of a: " << std::endl;
+    std::cout << "[*** Sorted array:]" << std::endl;
+    for(int k = 0; k<3; ++k) 
+		std::cout << i[k] << std::endl;
+
+    std::cout << "[*** Unsorted array:]" << std::endl;
+    for(int k = 0; k<3; ++k) 
+		std::cout << j[k] << std::endl;
+
+    std::cout << "[*] Inverted elements of a: " << std::endl;
+    std::cout << "[*** Sorted array:]" << std::endl;
+    for(--ie; ie != i; --ie) 
+		std::cout << *ie << std::endl;
+    std::cout << *ie << std::endl; //Last (first) element
+
+    std::cout << "[*** Unsorted array:]" << std::endl;
+    for(--je; je != j; --je) 
+		std::cout << *je << std::endl;
+    std::cout << *je << std::endl; //Last (first) element
+
+    sarray_string b(10);
+
+    b.insert("marmelade");
+    b.insert("to");
+    b.insert("sugar song");
+    b.insert("peanuts");
+    b.insert("and");
+    b.insert("bitter step");
+
+    sarray_string::unsorted_const_iterator k, ke;
+    sarray_string::const_iterator l, le;
+
+    std::cout << "[*] Length of each of b strings: " << std::endl;
+    std::cout << "[*** Sorted array:]" << std::endl;
+    for(k = b.ubegin(), ke = b.uend(); k != ke; ++k) 
+		std::cout << k->length() << std::endl;
+
+    std::cout << "[*** Unsorted array:]" << std::endl;
+    for(l = b.begin(), le = b.end(); l != le; ++l) 
+		std::cout << l->length() << std::endl;
+
+    std::cout << "***Iterators operators successful***" << std::endl;
+}
+
+void iterators_test3() {
     std::cout << std::endl << "***Iterator test on non-primitive type***" << std::endl << std::endl;
 
     typedef sortedarray<std::string, a_less_b<std::string>> sarray;
@@ -186,9 +251,14 @@ void operators_test() {
     assert(a(0) == b(0) && "Issue with copy constructor");
     assert(a(1) != b(1) && "Issue with copy constructor");
 
+    sarray c;
     a = b;
+    c = b;
     std::cout <<"[*] Contents of a:" << std::endl;
     std::cout << a << std::endl;
+
+    std::cout <<"[*] Contents of c:" << std::endl;
+    std::cout << c << std::endl;
 
     std::cout << "***Operators test successful***" << std::endl;
 }
@@ -228,6 +298,30 @@ void find_count_test() {
     std::cout << "***find_count test successful***" << std::endl;
 }
 
+void errors_test() {
+    std::cout << std::endl << "***Errors test***" << std::endl << std::endl;
+
+    typedef sortedarray<point<double>, same_quadrant<double>> sarray_point;
+    typedef point<double> point;
+    
+    sarray_point a(4);
+    a.insert(point(1.2929, 2.0292));
+
+    try {
+        std::cout << a(99) << std::endl;
+    }catch(const std::exception &exc){
+        std::cerr << exc.what() << std::endl;
+    }
+
+    try {
+        std::cout << a[-1991] << std::endl;
+    }catch(const std::exception &exc){
+        std::cerr << exc.what() << std::endl;
+    }
+
+    std::cout << "***Errors test successful***" << std::endl;
+}
+
 int main() {
     
     // Initialization test with the default constructor
@@ -239,14 +333,20 @@ int main() {
     // Iterators test on primitive type
     iterators_test();
 
-    // Iterators test on non-primitive type
+    // Iterators operators test
     iterators_test2();
+
+    // Iterators test on non-primitive type
+    iterators_test3();
 
     // Operators test
     operators_test();
 
     // find_count test
     find_count_test();
+
+    // Errors test (to execute in non-debug mode, or the assertions will stop it!)
+    errors_test();
 
     std::cout << std::endl << "*** All test completed successfully ***" << std::endl;
 

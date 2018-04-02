@@ -58,7 +58,7 @@ public: //Iterators
 
         // Returns pointed value
         pointer operator->() const {
-            return (*ptr);
+            return *ptr;
         }
         
         // Returns value at pointed index
@@ -407,7 +407,7 @@ public:
 
     /**
     @brief Method to clear the sortedarray
-    Clears the sortedarray to leave the mmeory in a consistent state
+    Clears the sortedarray to leave the memory in a consistent state
     **/
 
     void clear() { 
@@ -478,6 +478,9 @@ public:
 	**/
 	const T &operator[](size_type index) const {
 		assert(index < _filled && "Index exceeds filled capacity"); 
+        if (index >= _filled) {
+				throw(std::range_error("index >= _filled, must be: index < _filled"));
+			}
 		return *_sortedarray[index];
 	}
 
@@ -489,6 +492,9 @@ public:
 	**/
 	const T &operator()(size_type index) const {
 		assert(index < _filled && "Index exceeds filled capacity"); 
+        if (index >= _filled) {
+				throw(std::range_error("index >= _filled, must be: index < _filled"));
+			}
 		return _unsortedarray[index];
 	}
 
@@ -536,10 +542,14 @@ public:
             ++_filled;
 
             #ifndef NDEBUG
-                std::cout << " _u: " << _unsortedarray[_filled - 1] 
-                << " | addr: "<< static_cast<const void*>(&_unsortedarray[_filled - 1]) << std::endl;
-                std::cout << " _s: " << static_cast<const void*>(_sortedarray[_filled - 1]) 
-                << " | addr: "<< &_sortedarray[_filled - 1] << std::endl;
+                try{
+                    std::cout << " _u: " << _unsortedarray[_filled - 1] 
+                    << " | addr: "<< static_cast<const void*>(&_unsortedarray[_filled - 1]) << std::endl;
+                    std::cout << " _s: " << static_cast<const void*>(_sortedarray[_filled - 1]) 
+                    << " | addr: "<< &_sortedarray[_filled - 1] << std::endl;
+                }catch(...){
+                    std::cout << "Issue dereferencing object" << std::endl;
+                }
             #endif
 
             insertion_sort();

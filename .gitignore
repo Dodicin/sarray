@@ -1,6 +1,6 @@
 *.o
 *.exe
-html/
-exam-docs/
+html
+exam-docs
 relazione.md
-Qt/
+Qt

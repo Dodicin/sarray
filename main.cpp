@@ -8,10 +8,10 @@ void def_init_test() {
 
     sarray a;
 
-    assert(a.size() == 0 && "[-] Issue with _size, default ctor on primitive type");
-    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
-    assert(a.insert(2) == false && "[*] Issue with insert(), default ctor on primitive type");
-    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.size() == 0 && "[-] Issue with _size, should be 0");
+    assert(a.filled() == 0 && "[-] Issue with _filled, should be 0");
+    assert(a.insert(2) == false && "[*] Issue with insert(), should be false");
+    assert(a.filled() == 0 && "[-] Issue with _filled, should be 0");
 
     std::cout << "[*] Contents of a: " << std::endl;
     std::cout << a << std::endl;
@@ -26,17 +26,16 @@ void init_test() {
 
     sarray a(2);
 
-    assert(a.size() == 2 && "[-] Issue with _size, default ctor on primitive type");
-    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
-    assert(a.insert(1) == true && "[-] Issue with _filled, default ctor on primitive type");
-    a.insert(1);
-    assert(a.insert(2) == false && "[-] Issue with _filled, default ctor on primitive type");
-    a.insert(2);
-    assert(a.filled() == 2 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.size() == 2 && "[-] Issue with _size, should be 2");
+    assert(a.filled() == 0 && "[-] Issue with _filled, should be 0");
+    assert(a.insert(99) == true && "[-] Issue with insert(), should be true");
+    assert(a.insert(98) == true && "[-] Issue with insert(), should be true");
+    assert(a.insert(97) == false && "[-] Issue with insert(),should be false");
+    assert(a.filled() == 2 && "[-] Issue with _filled, should be 2");
 
     a.clean();
-    assert(a.size() == 2 && "[-] Issue with _size, default ctor on primitive type");
-    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.size() == 2 && "[-] Issue with _size, should be 2");
+    assert(a.filled() == 0 && "[-] Issue with _filled, should be 0");
     a.insert(2);
     a.insert(3);
 
@@ -44,14 +43,14 @@ void init_test() {
     std::cout << a << std::endl;
    
     sarray b(10, 42);
-    assert(b.size() == 10 && "[-] Issue with _size, default ctor on primitive type");
-    assert(b.filled() == 10 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(b.size() == 10 && "[-] Issue with _size, should be 10");
+    assert(b.filled() == 10 && "[-] Issue with _filled, should be 10");
 
     std::cout << "[*] Contents of b: " << std::endl;
     std::cout << b << std::endl;
 
     a.clean();
-    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.filled() == 0 && "[-] Issue with _filled, should be 0");
 
     a.insert(1);
     a.insert(2);
@@ -81,8 +80,8 @@ void iterators_test() {
     std::cout << a << std::endl;
 
     a.clean();
-    assert(a.size() == 6 && "[-] Issue with _size, default ctor on primitive type");
-    assert(a.filled() == 0 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.size() == 6 && "[-] Issue with _size, should be 6");
+    assert(a.filled() == 0 && "[-] Issue with _filled, should be 0");
 
     a.insert('r');
     a.insert('a');
@@ -90,7 +89,7 @@ void iterators_test() {
     a.insert('u');
     a.insert('g');
     a.insert('o');
-    assert(a.filled() == 6 && "[-] Issue with _filled, default ctor on primitive type");
+    assert(a.filled() == 6 && "[-] Issue with _filled, should be 6");
 
     sarray::unsorted_const_iterator i, ie;
     sarray::const_iterator j, je;
@@ -187,7 +186,7 @@ void iterators_test3() {
     a.insert("and");
     a.insert("bitter step");
 
-    assert(a.filled() == 6 && "[-] Issue with _filled, default ctor on non-primitive type");
+    assert(a.filled() == 6 && "[-] Issue with _filled, should be 6");
 
     sarray::unsorted_const_iterator i, ie;
     sarray::const_iterator j, je;
@@ -254,6 +253,7 @@ void operators_test() {
     sarray c;
     a = b;
     c = b;
+    assert(a[0] == c[0] && "Issue with copy constructor");
     std::cout <<"[*] Contents of a:" << std::endl;
     std::cout << a << std::endl;
 
@@ -276,6 +276,20 @@ void find_count_test() {
 
     a_nequal_b<int> funct;
     find_count(a, 3, funct);
+
+    typedef sortedarray<std::string> sarray_string;
+
+    sarray_string b(10);
+    b.insert("I'm");
+    b.insert("just");
+    b.insert("a");
+    b.insert("poor");
+    b.insert("boy");
+    b.insert("nobody");
+    b.insert("loves me");
+    
+    a_less_b<std::string> funct_s;
+    find_count(b, std::string("bismillah"), funct_s);
 
     typedef sortedarray<point<double>, same_quadrant<double>> sarray_point;
     typedef point<double> point;
@@ -346,7 +360,7 @@ int main() {
     find_count_test();
 
     // Errors test (to execute in non-debug mode, or the assertions will stop it!)
-    errors_test();
+    //errors_test();
 
     std::cout << std::endl << "*** All test completed successfully ***" << std::endl;
 

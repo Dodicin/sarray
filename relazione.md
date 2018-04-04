@@ -18,25 +18,26 @@ In altre parole, l'ordinamento prescinde dalla posizione fisica degli elementi i
 Il progetto si prestava a diversi tipi di implementazione del custom container richiesto, tra le quali ho individuato:
 
 1. Priority queue
-    * Si definisce un'array di `struct cell` templati, contenenti il valore `T value` e l'indice logico `unsigned int index`.
+    * Si definisce un'array di `struct cell` templati, contenenti il valore `T value` e l'indice d'ordinamento logico `unsigned int index`.
 2. Array + struttura di supporto
-    * Si definisce un'array di tipo `T` contenente i valori ed una struttura di supporto contentente i puntatori ordinati agli elementi dell'array
+    * Si definisce un puntatore di tipo `T*` (cioé un array) contenente i valori ed una struttura di supporto contentente i puntatori ordinati agli elementi dell'array
 
-La scelta è caduta sulla seconda implementazione per questioni di semplicità e performanza. La soluzione `1.` ad una prima analisi avrebbe infatti richiesto una certa macchinosità per quanto riguardava l'accesso agli elementi ordinati rispetto alla soluzione `2.`, senza creare un vero vantaggio in termini di spazio.
+La scelta è caduta sulla seconda implementazione per questioni di semplicità. La soluzione `1.` ad una prima analisi avrebbe infatti richiesto una certa macchinosità per quanto riguardava l'accesso agli elementi ordinati rispetto alla soluzione `2.`, senza creare un vero vantaggio in termini di spazio o di implementazione.
 
-La seconda scelta che ho fatto riguardava la struttura di supporto da utilizzare per memorizzare l'ordine logico dell'array. Tra le varie strutture possibili, ho scelto di utilizzare un array di tipo `T*` di puntatori agli elementi del primo array. 
+La seconda scelta che ho fatto riguardava la struttura di supporto da utilizzare per memorizzare l'ordine logico dell'array. Tra le varie strutture possibili, ho scelto di utilizzare un puntatore di tipo `T**`, cioé un array di puntatori agli elementi del primo array. 
 
-La scelta è stata motivata nuovamente da semplicità e performanza. L'aggiunta di strutture più complesse avrebbe necessitato la scrittura di classi non espressamente richieste dalle specifiche, i cui vantaggi in termini di performance rimangono marginali. La struttura del doppio array ha il vantaggio di essere estremamente semplice: all'infuori della procedura di inserimento, entrambi gli array sono infatti gestiti singolarmente. Inoltre, l'accesso ai dati ordinati è eseguito in O(1), un vantaggio non trascurabile al confronto con altre strutture (ordered list: O(1)+O(n), binary search tree: O(1)+(logn)).
+La scelta è stata motivata nuovamente da semplicità e performanza. L'aggiunta di strutture più complesse avrebbe necessitato la scrittura di classi non espressamente richieste dalle specifiche, i cui vantaggi in termini di performance rimangono marginali, che avrebbero introdotto però un'overhead in termini di difficoltà di stesura del codice e debug. La struttura del doppio array ha il vantaggio di essere estremamente semplice: all'infuori della procedura di inserimento, entrambi gli array sono infatti gestiti singolarmente. Inoltre, l'accesso ai dati ordinati è eseguito in O(1), un vantaggio non trascurabile al confronto con altre strutture (ordered list: O(1)+O(n), binary search tree: O(1)+(logn)).
 
 #### Implementazione di base
 A seguire le scelte di implementazione per quanto riguarda la classe `sortedarray`:
 
 * **Attributi della classe**:
-    * `T* _unsortedarray`, array di tipo T.
-    * `T** _sortedarray`, array di tipo T* ordinato.
-    * `size_type _size`, dimensione dell'array.
-    * `size_type _filled`, numero di elementi nell'array.
+    * `T* _unsortedarray`, array di tipo T, contenente i dati nell'ordine di inserimento.
+    * `T** _sortedarray`, array di tipo T* ordinato, contenente i puntatori agli elementi di `_unsortedarray`, ordinati secondo `_funct`.
+    * `size_type _size`, dimensione del sortedarray.
+    * `size_type _filled`, numero di elementi nel sortedarray.
     * `F _funct`, il funtore binario utilizzato per l'ordinamento.
+
 * Questi campi si sono rivelati sufficienti per gestire ogni tipo di operazione del sortedarray.
 * `size_type` è un tipo definito nella classe corrispondente a `unsigned int`.
 
@@ -120,13 +121,13 @@ A seguire le scelte di implementazione per quanto riguarda la classe `sortedarra
 7. **clear**
     * Il metodo è utilizzato per lasciare la memoria in uno stato consistente. Cancella tramite `delete[]` i due array, e azzera gli altri attributi della classe.
 8. **clean**
-    * Il metodo è utilizzato per svuotare l'array, settando la capacità `_filled` a 0. È di per sé uno svuotamente logico, perché gli elementi all'interno dei due array verranno sovrascritti. Ciò non è causa di eventuali memory leak, perché lo spazio allocato rimane lo stesso, cancellato alla fine dal rispettivo distruttore.
+    * Il metodo è utilizzato per svuotare l'array, settando la capacità `_filled` a 0. È di per sé uno svuotamente logico, perché gli elementi all'interno dei due array non vengono cancellati, ma verranno sovrascritti da eventuali nuovi inserimenti. Ciò non è causa di eventuali memory leak, perché lo spazio allocato rimane lo stesso, cancellato alla fine dal rispettivo distruttore.
 9. **size**, **filled**
     * I due metodi restituiscono rispettivamente la `_size` e `_filled`, cioé la grandezza effettiva del sortedarray e la capacità riempita.
 10. **swap**
     * Metodo utilizzato dall'assignment operator per swappare il contenuto di due sortedarray fra di loro.
 11. **operator=**
-    * L'operatore permette la copia tra due sortedarray.
+    * L'operatore permette la copia tra due sortedarray. Utilizza il metodo `swap()`.
 12. **operator<<**
     * Stream operator per il sortedarray, stampa utilizzando gli iteratori relativi, i contenuti di `_unsortedarray` e `_sortedarray`.
 13. **find_count**
@@ -138,11 +139,11 @@ A seguire le scelte di implementazione per quanto riguarda la classe `sortedarra
 2. **init_test()**
     * Test di inizializzazione che utilizza diversi costruttori secondari. Vengono usate `assert()` per verificare il corretto comportamento di `size()`, `filled()`, `insert()` e `clean()` in diversi stati di un sortedarray (vuoto, pieno, etc).
 3. **iterators_test()**
-    * Test sugli iteratori utilizzando dati di tipo primitivo. Instanzia un `const_iterator` e `unsorted_const_iterator` per visualizzare il conetnuto del sortedarray.
+    * Test sugli iteratori utilizzando dati di tipo primitivo. Instanzia un `const_iterator` e `unsorted_const_iterator` per visualizzare il contenuto del sortedarray.
 4. **iterators_test2()**
     * Test sugli iteratori che utilizza dati di tipo primitivo e non. Testa i diversi operatori definiti sugli iteratori, quali `operator[]`, `operator*`, `operator->` e gli operatori aritmetici.
 5. **iterators_test3()**
-    * Test sugli iteratori che utilizza dati di tipo non primitivo. Instanzia un `const_iterator` e `unsorted_const_iterator` per visualizzare il conetnuto del sortedarray.
+    * Test sugli iteratori che utilizza dati di tipo non primitivo. Instanzia un `const_iterator` e `unsorted_const_iterator` per visualizzare il contenuto del sortedarray.
 6. **operators_test()**
     * Test sugli operatori definiti su sortedarray, in particolare `operator()`, `operator[]` e `operator=`.
 7. **find_count_test()**
@@ -155,4 +156,5 @@ Nel file `utils.h` sono presenti funtori e strutture utilizzate nei test.
 
 #### Informazioni varie
 * È stato fatto uso estensivo della macro `NDEBUG` all'interno del codice per verificare il corretto posizionamento degli indirizzi.
-* in fase di sviluppo è stato utilizzato `git` insieme a Github. La repository è ora pubblica @github.com/dodicin/sarray.
+* È stato fatto uso di `static_cast<const void*>` per la stampa degli indirizzi di ogni tipo in modalità debug (problema che in particolare afferisce ad array di stringhe C-style).
+* In fase di sviluppo è stato utilizzato `git` insieme a Github. La repository è ora pubblica @github.com/dodicin/sarray.

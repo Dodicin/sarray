@@ -354,7 +354,7 @@ int main() {
     find_count_test();
 
     // Errors test (to execute in non-debug mode, or the assertions will stop it!)
-    //errors_test();
+    errors_test();
 
     std::cout << std::endl << "*** All test completed successfully ***" << std::endl;
 

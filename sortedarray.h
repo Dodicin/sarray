@@ -24,7 +24,7 @@ The sorting is done by a generic comparation functor F.
 
 template <
     typename T,
-    typename F=a_less_b<T>>
+    typename F=a_less_b<T> >
 class sortedarray {
     friend class iterator;
     friend class const_interator;
@@ -608,10 +608,6 @@ std::ostream &operator<<(std::ostream &os,
 		#ifndef NDEBUG
 		os << "Address: " << static_cast<const void*>(&(*j)) << std::endl;
 		#endif
-
-        if(&(*j) == nullptr)
-            os << "*nullptr" << std::endl;
-        else
 		    os << *j << std::endl;
     }
     

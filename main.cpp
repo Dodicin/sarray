@@ -4,7 +4,7 @@
 
 void def_init_test() {
     std::cout << std::endl << "***Initialization test (default)***" << std::endl << std::endl;
-    typedef sortedarray<int, a_less_b<int>> sarray;
+    typedef sortedarray<int, a_less_b<int> > sarray;
 
     sarray a;
 
@@ -22,7 +22,7 @@ void def_init_test() {
 void init_test() {
     std::cout << std::endl << "***Initialization test***" << std::endl << std::endl;
 
-    typedef sortedarray<int, a_less_b<int>> sarray;
+    typedef sortedarray<int, a_less_b<int> > sarray;
 
     sarray a(2);
 
@@ -72,7 +72,7 @@ void init_test() {
 
 void iterators_test() {
     std::cout << std::endl << "***Iterators test on primitive type***" << std::endl << std::endl;
-    typedef sortedarray<char, a_less_b<char>> sarray;
+    typedef sortedarray<char, a_less_b<char> > sarray;
 
     sarray a(6, 'w');
 
@@ -108,8 +108,8 @@ void iterators_test() {
 
 void iterators_test2() {
     std::cout << std::endl << "***Iterators operators test***" << std::endl << std::endl;
-    typedef sortedarray<char, a_less_b<char>> sarray_char;
-    typedef sortedarray<std::string, a_less_b<std::string>> sarray_string;
+    typedef sortedarray<char, a_less_b<char> > sarray_char;
+    typedef sortedarray<std::string, a_less_b<std::string> > sarray_string;
 
     sarray_char a(6);
     a.insert('r');
@@ -175,7 +175,7 @@ void iterators_test2() {
 void iterators_test3() {
     std::cout << std::endl << "***Iterator test on non-primitive type***" << std::endl << std::endl;
 
-    typedef sortedarray<std::string, a_less_b<std::string>> sarray;
+    typedef sortedarray<std::string, a_less_b<std::string> > sarray;
 
     sarray a(10);
 
@@ -195,18 +195,12 @@ void iterators_test3() {
 
     std::cout << std::endl << "[*** Unsorted array:]" << std::endl;
     for(i = a.ubegin(), ie = a.uend(); i != ie; ++i) {
-		if(&(*i) == nullptr)
-            std::cout << "*nullptr" << std::endl;
-        else
 		    std::cout << *i << std::endl;
     }
 
     std::cout << "[*** Sorted array:]" << std::endl;
 
     for(j = a.begin(), je = a.end(); j != je; ++j) {
-		if(&(*j) == nullptr)
-            std::cout << "*nullptr" << std::endl;
-        else
 		    std::cout << *j << std::endl;
     }
 
@@ -230,7 +224,7 @@ void operators_test() {
 
     std::cout << std::endl << "***Operators test***" << std::endl << std::endl;
 
-    typedef sortedarray<std::string, a_less_b<std::string>> sarray;
+    typedef sortedarray<std::string, a_less_b<std::string> > sarray;
 
     sarray a(4);
     a.insert("bright");
@@ -291,7 +285,7 @@ void find_count_test() {
     a_less_b<std::string> funct_s;
     find_count(b, std::string("bismillah"), funct_s);
 
-    typedef sortedarray<point<double>, same_quadrant<double>> sarray_point;
+    typedef sortedarray<point<double>, same_quadrant<double> > sarray_point;
     typedef point<double> point;
 
     sarray_point line(6);
@@ -315,7 +309,7 @@ void find_count_test() {
 void errors_test() {
     std::cout << std::endl << "***Errors test***" << std::endl << std::endl;
 
-    typedef sortedarray<point<double>, same_quadrant<double>> sarray_point;
+    typedef sortedarray<point<double>, same_quadrant<double> > sarray_point;
     typedef point<double> point;
     
     sarray_point a(4);

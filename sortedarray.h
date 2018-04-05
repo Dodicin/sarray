@@ -332,7 +332,7 @@ public:
 	**/
 	sortedarray(): _unsortedarray(0), _sortedarray(0), _size(0), _filled(0) { 
 		#ifndef NDEBUG
-		std::cout << "sortedarray::sortedarray()" << std::endl;
+		    std::cout << "sortedarray::sortedarray()" << std::endl;
 		#endif
 	}
 
@@ -347,7 +347,7 @@ public:
         _sortedarray = new T*[size];
         
 		#ifndef NDEBUG
-		std::cout << "sortedarray::sortedarray(size_type)" << std::endl;
+		    std::cout << "sortedarray::sortedarray(size_type)" << std::endl;
 		#endif
 	}
 
@@ -373,7 +373,7 @@ public:
 			throw;
 		}
 		#ifndef NDEBUG
-		std::cout << "sortedarray::sortedarray(size_type, T)" << std::endl;
+		    std::cout << "sortedarray::sortedarray(size_type, T)" << std::endl;
 		#endif
 	}
 
@@ -390,7 +390,7 @@ public:
         _filled = other._filled;
 
 		try {
-			for(size_type i=0; i<_size; ++i) {
+			for(size_type i=0; i<_filled; ++i) {
 				_unsortedarray[i] = other._unsortedarray[i];
                 _sortedarray[i] = other._sortedarray[i];
             }
@@ -401,7 +401,7 @@ public:
 		}
 
 		#ifndef NDEBUG
-		std::cout << "sortedarray::sortedarray(const sortedarray&)" << std::endl;
+		    std::cout << "sortedarray::sortedarray(const sortedarray&)" << std::endl;
 		#endif
 	}
 
@@ -418,7 +418,7 @@ public:
         _sortedarray = 0;
 
         #ifndef NDEBUG
-		std::cout << "sortedarray::clear" << std::endl;
+		    std::cout << "sortedarray::clear" << std::endl;
 		#endif
     }
 
@@ -431,7 +431,7 @@ public:
         _filled = 0;
 
         #ifndef NDEBUG
-		std::cout << "sortedarray::clean" << std::endl;
+		    std::cout << "sortedarray::clean" << std::endl;
 		#endif
     }
 
@@ -466,7 +466,7 @@ public:
         _size = 0;
 
 		#ifndef NDEBUG
-		std::cout << "sortedarray::~sortedarray()" << std::endl;
+		    std::cout << "sortedarray::~sortedarray()" << std::endl;
 		#endif
 	}
 
@@ -558,7 +558,7 @@ public:
         }
         
         #ifndef NDEBUG
-        std::cout << "sortedarray::insert()" << std::endl;
+            std::cout << "sortedarray::insert()" << std::endl;
 		#endif
 
         return true;

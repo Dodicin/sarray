@@ -28,4 +28,4 @@ debug:
 	g++ $(CXXFLAGS_DEBUG) main.o -o main.exe
 
 run_valgrind: debug
-	valgrind --leak-check=yes --track-origins=yes -v ./main.exe
+	valgrind --leak-check=yes --track-origins=yes --leak-check=full --show-leak-kinds=all -v ./main.exe

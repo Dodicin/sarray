@@ -241,13 +241,16 @@ void operators_test() {
         std::cout << a(i) << std::endl;
 
     sarray b(3, "bright");
-    assert(a(0) == b(0) && "Issue with copy constructor");
-    assert(a(1) != b(1) && "Issue with copy constructor");
-
-    sarray c;
+    assert(a(0) == b(0) && "Issue with comparison");
+    assert(a(1) != b(1) && "Issue with comparison");
     a = b;
-    c = b;
+    assert(a(0) == b(0) && "Issue with assignment operator");
+    assert(a(1) == b(1) && "Issue with assignment operator");
+
+    sarray c(a);
     assert(a[0] == c[0] && "Issue with copy constructor");
+    assert(a[1] == c[1] && "Issue with copy constructor");
+
     std::cout <<"[*] Contents of a:" << std::endl;
     std::cout << a << std::endl;
 
@@ -349,7 +352,7 @@ int main() {
 
     // Operators test
     operators_test();
-
+    
     // find_count test
     find_count_test();
 

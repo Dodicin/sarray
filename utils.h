@@ -27,6 +27,10 @@ struct a_less_b {
 	}
 };
 
+/**
+	@brief Point class
+	Represents a bidimensional T point
+**/
 template <typename T>
 struct point {
 	T _x;

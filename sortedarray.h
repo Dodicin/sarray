@@ -339,7 +339,7 @@ public:
     /**
 		@brief Secondary constructor
 
-		Instantiates an sortedarray with a given size
+		Instantiates a sortedarray with a given size
         @param size Dimension of sortedarray to instantiate
 	**/
 	explicit sortedarray(size_type size): _unsortedarray(0), _sortedarray(0), _size(size), _filled(0) {
@@ -354,7 +354,7 @@ public:
     /**
 		@brief Secondary constructor
 
-        Instantiates an sortedarray with a given size, allowing to initialize the cells
+        Instantiates a sortedarray with a given size, allowing to initialize the cells
         of the sortedarray with a given value.
 		@param size Dimension of the sortedarray to instantiate
 		@param value Value for the initialization of the cells
@@ -459,7 +459,7 @@ public:
     /**
 		@brief Distructor
 
-		Distructor, removes the allocated memory
+		Distructor, deletes the allocated memory
 	    **/
 	~sortedarray() {
 		clear();
